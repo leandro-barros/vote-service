@@ -1,6 +1,6 @@
 package com.southsystem.voteservice.controller;
 
-import com.southsystem.voteservice.TopicService;
+import com.southsystem.voteservice.service.TopicService;
 import com.southsystem.voteservice.dto.request.TopicRequestDto;
 import com.southsystem.voteservice.dto.response.TopicResponseDto;
 import org.springframework.http.HttpStatus;

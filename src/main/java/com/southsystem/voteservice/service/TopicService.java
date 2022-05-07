@@ -1,4 +1,4 @@
-package com.southsystem.voteservice;
+package com.southsystem.voteservice.service;
 
 import com.southsystem.voteservice.dto.request.TopicRequestDto;
 import com.southsystem.voteservice.dto.response.TopicResponseDto;
