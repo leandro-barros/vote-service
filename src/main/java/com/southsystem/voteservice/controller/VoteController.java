@@ -36,10 +36,10 @@ public class VoteController {
 
     @ExceptionHandler({ SessionNotOpenException.class })
     public ResponseEntity<Object> handleProdutoJaCadastrado(SessionNotOpenException ex) {
-        String menssageUser = messageSource.getMessage("session.notopen", null,
+        String messageUser = messageSource.getMessage("session.notopen", null,
                                 LocaleContextHolder.getLocale());
-        String menssageDevelop = ex.toString();
-        List<Erro> erros = Arrays.asList(new Erro(menssageUser, menssageDevelop));
+        String messageDevelop = ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(messageUser, messageDevelop));
         return new ResponseEntity<>(erros, HttpStatus.CONFLICT);
     }
 
