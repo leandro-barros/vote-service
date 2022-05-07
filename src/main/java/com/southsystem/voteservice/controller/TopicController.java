@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RequestMapping("/api/v1/topic")
 @RestController
 public class TopicController {
@@ -18,7 +20,7 @@ public class TopicController {
     }
 
     @PostMapping
-    public ResponseEntity<TopicResponseDto> save(@RequestBody TopicRequestDto topicRequestDto) {
+    public ResponseEntity<TopicResponseDto> save(@Valid @RequestBody TopicRequestDto topicRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(topicService.save(topicRequestDto)) ;
     }
 

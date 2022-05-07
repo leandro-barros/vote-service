@@ -6,14 +6,18 @@ import com.southsystem.voteservice.model.Vote;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+
 @Setter
 @Getter
 public class VoteRequestDto {
 
     private Topic topic;
 
+    @NotNull
     private Associate associate;
 
+    @NotNull
     private Boolean vote;
 
     public Vote toVote() {
