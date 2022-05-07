@@ -4,6 +4,7 @@ import com.southsystem.voteservice.dto.request.SessionRequestDto;
 import com.southsystem.voteservice.dto.response.SessionResponseDto;
 import com.southsystem.voteservice.model.Session;
 import com.southsystem.voteservice.repository.SessionRepository;
+import com.southsystem.voteservice.service.exception.SessionRegisteredException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -18,8 +19,8 @@ public class SessionService {
     }
 
     public SessionResponseDto openSession(SessionRequestDto sessionRequestDto) {
+        existsSession(sessionRequestDto.getTopic().getId());
         setEndDate(sessionRequestDto);
-
         Session session = sessionRequestDto.toSession();
         sessionRepository.save(session);
         return new SessionResponseDto(session);
@@ -28,6 +29,12 @@ public class SessionService {
     private void setEndDate(SessionRequestDto session) {
         Integer sessionTime = Objects.isNull(session.getSessionTimeInMinute()) ? 1 : session.getSessionTimeInMinute();
         session.setEndDate(session.getStartDate().plusMinutes(sessionTime));
+    }
+
+    private void existsSession(Long topicId) {
+        if (sessionRepository.existsByTopicId(topicId)) {
+            throw new SessionRegisteredException();
+        }
     }
 
 }
