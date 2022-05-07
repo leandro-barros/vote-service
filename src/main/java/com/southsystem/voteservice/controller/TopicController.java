@@ -17,7 +17,6 @@ public class TopicController {
         this.topicService = topicService;
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ResponseEntity<TopicResponseDto> save(@RequestBody TopicRequestDto topicRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(topicService.save(topicRequestDto)) ;
