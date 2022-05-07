@@ -1,9 +1,13 @@
 package com.southsystem.voteservice.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Entity
 @Table(name = "vote")
@@ -19,7 +23,7 @@ public class Vote {
 
     @ManyToOne
     @JoinColumn(name = "associate_id")
-    private Topic associate;
+    private Associate associate;
 
     private Boolean vote;
 
