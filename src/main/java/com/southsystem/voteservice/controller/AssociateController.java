@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RequestMapping("/api/v1/associate")
 @RestController
 public class AssociateController {
@@ -21,7 +23,7 @@ public class AssociateController {
     }
 
     @PostMapping
-    public ResponseEntity<AssociateResponseDto> save(@RequestBody AssociateRequestDto associateRequestDto) {
+    public ResponseEntity<AssociateResponseDto> save(@Valid @RequestBody AssociateRequestDto associateRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(associateService.save(associateRequestDto)) ;
     }
 

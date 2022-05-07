@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RequestMapping("/api/v1/vote")
 @RestController
 public class VoteController {
@@ -20,7 +22,7 @@ public class VoteController {
     }
 
     @PostMapping("/topic/{topicId}")
-    public ResponseEntity<VoteResponseDto> save(@PathVariable Long topicId, @RequestBody VoteRequestDto voteRequestDto) {
+    public ResponseEntity<VoteResponseDto> save(@PathVariable Long topicId, @Valid @RequestBody VoteRequestDto voteRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(voteService.saveVote(topicId, voteRequestDto)) ;
     }
 

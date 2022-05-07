@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RequestMapping("/api/v1/session")
 @RestController
 public class SessionController {
@@ -21,7 +23,7 @@ public class SessionController {
     }
 
     @PostMapping("/open")
-    public ResponseEntity<SessionResponseDto> openSession(@RequestBody SessionRequestDto sessionRequestDto) {
+    public ResponseEntity<SessionResponseDto> openSession(@Valid @RequestBody SessionRequestDto sessionRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(sessionService.openSession(sessionRequestDto)) ;
     }
 
