@@ -18,16 +18,16 @@ public class SessionService {
     }
 
     public SessionResponseDto openSession(SessionRequestDto sessionRequestDto) {
+        setEndDate(sessionRequestDto);
+
         Session session = sessionRequestDto.toSession();
-        checkEndDate(session);
         sessionRepository.save(session);
         return new SessionResponseDto(session);
     }
 
-    private void checkEndDate(Session session) {
-        if (Objects.isNull(session.getEndDate())) {
-            session.setEndDate(session.getStartDate().plusMinutes(1));
-        }
+    private void setEndDate(SessionRequestDto session) {
+        Integer sessionTime = Objects.isNull(session.getSessionTimeInMinute()) ? 1 : session.getSessionTimeInMinute();
+        session.setEndDate(session.getStartDate().plusMinutes(sessionTime));
     }
 
 }
