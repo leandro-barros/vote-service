@@ -4,6 +4,7 @@ import com.southsystem.voteservice.dto.request.VoteRequestDto;
 import com.southsystem.voteservice.dto.response.VoteResponseDto;
 import com.southsystem.voteservice.exceptionhandler.VoteServiceExceptionHandler.Erro;
 import com.southsystem.voteservice.service.VoteService;
+import com.southsystem.voteservice.service.exception.RegisteredVotedException;
 import com.southsystem.voteservice.service.exception.SessionNotOpenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -35,9 +36,18 @@ public class VoteController {
     }
 
     @ExceptionHandler({ SessionNotOpenException.class })
-    public ResponseEntity<Object> handleProdutoJaCadastrado(SessionNotOpenException ex) {
+    public ResponseEntity<Object> handleSessionNotOpen(SessionNotOpenException ex) {
         String messageUser = messageSource.getMessage("session.notopen", null,
                                 LocaleContextHolder.getLocale());
+        String messageDevelop = ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(messageUser, messageDevelop));
+        return new ResponseEntity<>(erros, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler({ RegisteredVotedException.class })
+    public ResponseEntity<Object> handleRegisteredVoted(RegisteredVotedException ex) {
+        String messageUser = messageSource.getMessage("registered.voted", null,
+                                     LocaleContextHolder.getLocale());
         String messageDevelop = ex.toString();
         List<Erro> erros = Arrays.asList(new Erro(messageUser, messageDevelop));
         return new ResponseEntity<>(erros, HttpStatus.CONFLICT);

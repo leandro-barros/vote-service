@@ -7,6 +7,7 @@ import com.southsystem.voteservice.model.Topic;
 import com.southsystem.voteservice.model.Vote;
 import com.southsystem.voteservice.repository.TopicRepository;
 import com.southsystem.voteservice.repository.VoteRepository;
+import com.southsystem.voteservice.service.exception.RegisteredVotedException;
 import com.southsystem.voteservice.service.exception.SessionNotOpenException;
 import org.springframework.stereotype.Service;
 
@@ -24,20 +25,30 @@ public class VoteService {
 
     public VoteResponseDto saveVote(Long topicId, VoteRequestDto voteRequestDto) {
         Topic topic = topicRepository.findById(topicId).get();
-        validations(topic);
         voteRequestDto.setTopic(topic);
 
-        Vote voteSaved = voteRepository.save(voteRequestDto.toVote());
+        Vote vote = voteRequestDto.toVote();
+
+        validations(vote);
+
+        Vote voteSaved = voteRepository.save(vote);
         return new VoteResponseDto(voteSaved);
     }
 
-    private void validations(Topic topic) {
-        isSessionOpen(topic.getSession());
+    private void validations(Vote vote) {
+        isSessionOpen(vote.getTopic().getSession());
+        isRegisteredVoted(vote);
     }
 
     private void isSessionOpen(Session session) {
         if (!session.getOpen()) {
             throw new SessionNotOpenException();
+        }
+    }
+
+    private void isRegisteredVoted(Vote vote) {
+        if (voteRepository.existsByAssociateIdAndTopicId(vote.getAssociate().getId(), vote.getTopic().getId())) {
+            throw new RegisteredVotedException();
         }
     }
 
