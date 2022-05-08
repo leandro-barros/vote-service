@@ -2,6 +2,7 @@ package com.southsystem.voteservice.service;
 
 import com.southsystem.voteservice.dto.request.VoteRequestDto;
 import com.southsystem.voteservice.dto.response.VoteResponseDto;
+import com.southsystem.voteservice.dto.response.VoteResultDto;
 import com.southsystem.voteservice.model.Session;
 import com.southsystem.voteservice.model.Topic;
 import com.southsystem.voteservice.model.Vote;
@@ -40,6 +41,42 @@ public class VoteService {
         return new VoteResponseDto(voteSaved);
     }
 
+    public VoteResultDto result(Long topicId) {
+        VoteResultDto voteResultDto = null;
+        Topic topic = findById(topicId);
+
+        if (isSessionOpen(topic.getSession())) {
+            voteResultDto = VoteResultDto.builder().voteInFavor(0L).voteAgainst(0L)
+                                                   .topic(topic.getSubject()).result("Eleição está em andamento.")
+                                          .build();
+            return voteResultDto;
+        }
+
+        Long voteInFavor = voteRepository.countByTopicAndVoteTrue(topic);
+        Long voteAgainst = voteRepository.countByTopicAndVoteFalse(topic);
+
+        String result = checkResult(voteInFavor, voteAgainst);
+
+        voteResultDto = VoteResultDto.builder().voteInFavor(voteInFavor).voteAgainst(voteAgainst)
+                                                .topic(topic.getSubject()).result(result)
+                                      .build();
+
+        return voteResultDto;
+    }
+
+    private String checkResult(Long voteInFavor, Long voteAgainst) {
+        String result = null;
+        if (voteAgainst == 0 && voteInFavor == 0) {
+            result = "Não houve voto na pauta";
+        } else if (voteInFavor == voteAgainst) {
+            result = "Pauta houve empate";
+        } else {
+            result = (voteInFavor > voteAgainst) ? "Pauta aprovada" : "Pauta reprovada";
+        }
+
+        return result;
+    }
+
     private Topic findById(Long id) {
         Optional<Topic> topic = topicRepository.findById(id);
         if (!topic.isPresent()) {
@@ -49,14 +86,18 @@ public class VoteService {
     }
 
     private void validations(Vote vote) {
-        isSessionOpen(vote.getTopic().getSession());
-        isRegisteredVoted(vote);
-    }
-
-    private void isSessionOpen(Session session) {
-        if (Objects.isNull(session) || session.getEndDate().isBefore(LocalDateTime.now()) || !session.getOpen()) {
+        if (!isSessionOpen(vote.getTopic().getSession())) {
             throw new SessionNotOpenException();
         }
+        isRegisteredVoted(vote);
+
+    }
+
+    private boolean isSessionOpen(Session session) {
+        if (Objects.isNull(session) || session.getEndDate().isBefore(LocalDateTime.now())) {
+            return false;
+        }
+        return true;
     }
 
     private void isRegisteredVoted(Vote vote) {
