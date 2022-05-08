@@ -28,5 +28,4 @@ public class Session {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    private Boolean open;
 }
