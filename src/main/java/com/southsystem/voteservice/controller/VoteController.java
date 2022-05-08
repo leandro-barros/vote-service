@@ -7,10 +7,12 @@ import com.southsystem.voteservice.exceptionhandler.VoteServiceExceptionHandler.
 import com.southsystem.voteservice.service.VoteService;
 import com.southsystem.voteservice.service.exception.RegisteredVotedException;
 import com.southsystem.voteservice.service.exception.SessionNotOpenException;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,12 +33,14 @@ public class VoteController {
     @Autowired
     private MessageSource messageSource;
 
-    @PostMapping("/topic/{topicId}")
-    public ResponseEntity<VoteResponseDto> save(@PathVariable Long topicId, @Valid @RequestBody VoteRequestDto voteRequestDto) {
+    @ApiOperation(value = "Register a associate vote on a topic")
+    @PostMapping(value = "/topic/{topicId}", produces = "application/json;charset=UTF-8")
+    public ResponseEntity<VoteResponseDto> saveVote(@PathVariable Long topicId, @Valid @RequestBody VoteRequestDto voteRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(voteService.saveVote(topicId, voteRequestDto)) ;
     }
 
-    @GetMapping("/topic/{topicId}/result")
+    @ApiOperation(value = "Return the poll result of a topic")
+    @GetMapping(value = "/topic/{topicId}/result", produces = "application/json;charset=UTF-8")
     public ResponseEntity<VoteResultDto> resultVoting(@PathVariable Long topicId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(voteService.result(topicId)) ;
     }

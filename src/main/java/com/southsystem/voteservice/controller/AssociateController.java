@@ -3,6 +3,7 @@ package com.southsystem.voteservice.controller;
 import com.southsystem.voteservice.dto.request.AssociateRequestDto;
 import com.southsystem.voteservice.dto.response.AssociateResponseDto;
 import com.southsystem.voteservice.service.AssociateService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,8 @@ public class AssociateController {
         this.associateService = associateService;
     }
 
-    @PostMapping
+    @ApiOperation(value = "Save a associate")
+    @PostMapping(produces = "application/json;charset=UTF-8")
     public ResponseEntity<AssociateResponseDto> save(@Valid @RequestBody AssociateRequestDto associateRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(associateService.save(associateRequestDto)) ;
     }
