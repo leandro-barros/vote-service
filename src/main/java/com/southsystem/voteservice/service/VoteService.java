@@ -15,12 +15,14 @@ import com.southsystem.voteservice.service.exception.RegisteredVotedException;
 import com.southsystem.voteservice.service.exception.SessionNotOpenException;
 import com.southsystem.voteservice.service.exception.UnableToVoteException;
 import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Slf4j
 @Service
 public class VoteService {
 
@@ -49,6 +51,7 @@ public class VoteService {
         validations(vote);
 
         Vote voteSaved = voteRepository.save(vote);
+        log.info("Vote registered in the topic with id: {}", topicId);
         return new VoteResponseDto(voteSaved);
     }
 
@@ -59,6 +62,7 @@ public class VoteService {
             VoteResultDto voteResultDto = VoteResultDto.builder().voteInFavor(0L).voteAgainst(0L)
                                                    .topic(topic.getSubject()).result("Eleição está em andamento.")
                                           .build();
+            log.info("Topic election with id: {} is in progress", topicId);
             return voteResultDto;
         }
 
@@ -66,6 +70,7 @@ public class VoteService {
     }
 
     public VoteResultDto resultVoted(Topic topic) {
+        log.info("Counting votes from the topic: {}", topic);
         Long voteInFavor = voteRepository.countByTopicAndVoteTrue(topic);
         Long voteAgainst = voteRepository.countByTopicAndVoteFalse(topic);
 
@@ -74,10 +79,12 @@ public class VoteService {
         VoteResultDto voteResultDto = VoteResultDto.builder().voteInFavor(voteInFavor).voteAgainst(voteAgainst)
                                                                 .topic(topic.getSubject()).result(result)
                                                             .build();
+        log.info("Return result votes");
         return voteResultDto;
     }
 
     private String checkResult(Long voteInFavor, Long voteAgainst) {
+        log.info("Checking the results of the votes");
         String result = null;
         if (voteAgainst == 0 && voteInFavor == 0) {
             result = "Não houve voto na pauta";
@@ -113,14 +120,15 @@ public class VoteService {
 
     private void checkPermissionToVoteByCpf(String cpf) {
         try {
+            log.info("Checking if a member can vote");
             ResponseEntity<DocumentDto> documentDto = documentClient.findByCpf(cpf);
 
-            if (documentDto.getStatusCode().is4xxClientError()) {
-                throw new InvalidCpfException();
-            } else if(documentDto.getBody().getStatus().equalsIgnoreCase("UNABLE_TO_VOTE")) {
+            if(documentDto.getBody().getStatus().equalsIgnoreCase("UNABLE_TO_VOTE")) {
+                log.error("Member is not allowed to vote");
                 throw new UnableToVoteException();
             }
         } catch (FeignException e) {
+            log.error("Associated with invalid CPF:{}", cpf);
             throw new InvalidCpfException();
         }
     }
