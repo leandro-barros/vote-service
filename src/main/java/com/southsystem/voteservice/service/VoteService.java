@@ -43,7 +43,7 @@ public class VoteService {
     public VoteResponseDto saveVote(Long topicId, VoteRequestDto voteRequestDto) {
         Topic topic = topicService.findById(topicId);
         Associate associate = associateService.findById(voteRequestDto.getAssociate().getId());
-        
+
         Vote vote = Vote.builder().associate(associate).topic(topic).vote(voteRequestDto.getVote()).build();
 
         validations(vote);
@@ -53,25 +53,27 @@ public class VoteService {
     }
 
     public VoteResultDto result(Long topicId) {
-        VoteResultDto voteResultDto = null;
         Topic topic = topicService.findById(topicId);
 
         if (isSessionOpen(topic.getSession())) {
-            voteResultDto = VoteResultDto.builder().voteInFavor(0L).voteAgainst(0L)
+            VoteResultDto voteResultDto = VoteResultDto.builder().voteInFavor(0L).voteAgainst(0L)
                                                    .topic(topic.getSubject()).result("Eleição está em andamento.")
                                           .build();
             return voteResultDto;
         }
 
+        return resultVoted(topic);
+    }
+
+    public VoteResultDto resultVoted(Topic topic) {
         Long voteInFavor = voteRepository.countByTopicAndVoteTrue(topic);
         Long voteAgainst = voteRepository.countByTopicAndVoteFalse(topic);
 
         String result = checkResult(voteInFavor, voteAgainst);
 
-        voteResultDto = VoteResultDto.builder().voteInFavor(voteInFavor).voteAgainst(voteAgainst)
-                                                .topic(topic.getSubject()).result(result)
-                                      .build();
-
+        VoteResultDto voteResultDto = VoteResultDto.builder().voteInFavor(voteInFavor).voteAgainst(voteAgainst)
+                                                                .topic(topic.getSubject()).result(result)
+                                                            .build();
         return voteResultDto;
     }
 
@@ -80,7 +82,7 @@ public class VoteService {
         if (voteAgainst == 0 && voteInFavor == 0) {
             result = "Não houve voto na pauta";
         } else if (voteInFavor == voteAgainst) {
-            result = "Pauta houve empate";
+            result = "Votação da Pauta ficou empate";
         } else {
             result = (voteInFavor > voteAgainst) ? "Pauta aprovada" : "Pauta reprovada";
         }
