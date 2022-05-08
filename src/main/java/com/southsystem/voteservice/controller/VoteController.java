@@ -2,6 +2,7 @@ package com.southsystem.voteservice.controller;
 
 import com.southsystem.voteservice.dto.request.VoteRequestDto;
 import com.southsystem.voteservice.dto.response.VoteResponseDto;
+import com.southsystem.voteservice.dto.response.VoteResultDto;
 import com.southsystem.voteservice.exceptionhandler.VoteServiceExceptionHandler.Erro;
 import com.southsystem.voteservice.service.VoteService;
 import com.southsystem.voteservice.service.exception.RegisteredVotedException;
@@ -33,6 +34,11 @@ public class VoteController {
     @PostMapping("/topic/{topicId}")
     public ResponseEntity<VoteResponseDto> save(@PathVariable Long topicId, @Valid @RequestBody VoteRequestDto voteRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(voteService.saveVote(topicId, voteRequestDto)) ;
+    }
+
+    @GetMapping("/topic/{topicId}/result")
+    public ResponseEntity<VoteResultDto> resultVoting(@PathVariable Long topicId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(voteService.result(topicId)) ;
     }
 
     @ExceptionHandler({ SessionNotOpenException.class })
