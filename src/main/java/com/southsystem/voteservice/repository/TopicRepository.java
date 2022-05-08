@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface TopicRepository extends JpaRepository<Topic, Long> {
 
-    List<Topic> findBySessionEndDateBefore(LocalDateTime now);
+    List<Topic> findBySessionEndDateBeforeAndSendResultFalse(LocalDateTime now);
 
 }
