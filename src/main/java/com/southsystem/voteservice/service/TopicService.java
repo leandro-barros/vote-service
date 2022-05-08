@@ -7,6 +7,8 @@ import com.southsystem.voteservice.repository.TopicRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,6 +23,15 @@ public class TopicService {
     public TopicResponseDto save(TopicRequestDto topicRequestDto) {
         Topic topicSaved = topicRepository.save(topicRequestDto.toTopic());
         return new TopicResponseDto(topicSaved);
+    }
+
+    public void updateTopicAfterProduceResultVote(Topic topic) {
+        topic.setSendResult(true);
+        topicRepository.save(topic);
+    }
+
+    public List<Topic> findBySessionEndDateBeforeAndSendResultFalse() {
+        return topicRepository.findBySessionEndDateBeforeAndSendResultFalse(LocalDateTime.now());
     }
 
     public Topic findById(Long id) {

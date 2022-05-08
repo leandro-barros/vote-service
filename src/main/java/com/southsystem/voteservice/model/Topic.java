@@ -23,4 +23,7 @@ public class Topic {
     private String subject;
 
     private String description;
+
+    @Column(name = "send_result")
+    private Boolean sendResult;
 }

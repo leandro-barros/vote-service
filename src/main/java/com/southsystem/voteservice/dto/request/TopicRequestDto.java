@@ -17,7 +17,7 @@ public class TopicRequestDto {
     private String description;
 
     public Topic toTopic() {
-        return new Topic(null, null, subject, description);
+        return new Topic(null, null, subject, description, false);
     }
 
 }
