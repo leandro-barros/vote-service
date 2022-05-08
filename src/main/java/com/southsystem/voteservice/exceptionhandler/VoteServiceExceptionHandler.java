@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +31,9 @@ public class VoteServiceExceptionHandler extends ResponseEntityExceptionHandler 
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-        String menssageUser = messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale());
-        String menssageDevelop = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
-        List<Erro> erros = Arrays.asList(new Erro(menssageUser, menssageDevelop));
+        String messageUser = messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale());
+        String messageDevelop = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(messageUser, messageDevelop));
         return handleExceptionInternal(ex, erros, headers, HttpStatus.BAD_REQUEST, request);
     }
 
@@ -47,22 +48,31 @@ public class VoteServiceExceptionHandler extends ResponseEntityExceptionHandler 
     @ExceptionHandler({ DataIntegrityViolationException.class })
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex,
                                                                         WebRequest request) {
-        String menssageUser = messageSource.getMessage("recurso.operacao.nao-permitida", null,
+        String messageUser = messageSource.getMessage("recurso.operacao.nao-permitida", null,
                 LocaleContextHolder.getLocale());
-        String menssageDevelop = ex.toString();
+        String messageDevelop = ex.toString();
 
-        List<Erro> erros = Arrays.asList(new Erro(menssageUser, menssageDevelop));
+        List<Erro> erros = Arrays.asList(new Erro(messageUser, messageDevelop));
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler({ EmptyResultDataAccessException.class })
+    public ResponseEntity<Object> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex,
+                                                                        WebRequest request) {
+        String messageUser = messageSource.getMessage("recurso.nao-encontrado", null,
+                                        LocaleContextHolder.getLocale());
+        String messageDevelop = ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(messageUser, messageDevelop));
+        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
 
     private List<Erro> createListErros(BindingResult bindingResult) {
         List<Erro> erros = new ArrayList<>();
 
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            String menssageUser = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
-            String menssageDevelop = fieldError.toString();
-            erros.add(new Erro(menssageUser, menssageDevelop));
+            String messageUser = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+            String messageDevelop = fieldError.toString();
+            erros.add(new Erro(messageUser, messageDevelop));
         }
 
         return erros;
@@ -70,20 +80,20 @@ public class VoteServiceExceptionHandler extends ResponseEntityExceptionHandler 
 
     public static class Erro {
 
-        private String menssageUser;
-        private String menssageDevelop;
+        private String messageUser;
+        private String messageDevelop;
 
         public Erro(String menssageUser, String menssageDevelop) {
-            this.menssageUser = menssageUser;
-            this.menssageDevelop = menssageDevelop;
+            this.messageUser = menssageUser;
+            this.messageDevelop = menssageDevelop;
         }
 
-        public String getMenssageUser() {
-            return menssageUser;
+        public String getMessageUser() {
+            return messageUser;
         }
 
-        public String getMenssageDevelop() {
-            return menssageDevelop;
+        public String getMessageDevelop() {
+            return messageDevelop;
         }
     }
 }
