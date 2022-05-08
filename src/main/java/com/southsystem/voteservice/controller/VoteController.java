@@ -42,7 +42,7 @@ public class VoteController {
     @ApiOperation(value = "Return the poll result of a topic")
     @GetMapping(value = "/topic/{topicId}/result", produces = "application/json;charset=UTF-8")
     public ResponseEntity<VoteResultDto> resultVoting(@PathVariable Long topicId) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(voteService.result(topicId)) ;
+        return ResponseEntity.status(HttpStatus.OK).body(voteService.result(topicId)) ;
     }
 
     @ExceptionHandler({ SessionNotOpenException.class })
