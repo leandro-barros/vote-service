@@ -9,7 +9,12 @@ import com.southsystem.voteservice.repository.TopicRepository;
 import com.southsystem.voteservice.repository.VoteRepository;
 import com.southsystem.voteservice.service.exception.RegisteredVotedException;
 import com.southsystem.voteservice.service.exception.SessionNotOpenException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class VoteService {
@@ -24,7 +29,7 @@ public class VoteService {
     }
 
     public VoteResponseDto saveVote(Long topicId, VoteRequestDto voteRequestDto) {
-        Topic topic = topicRepository.findById(topicId).get();
+        Topic topic = findById(topicId);
         voteRequestDto.setTopic(topic);
 
         Vote vote = voteRequestDto.toVote();
@@ -35,13 +40,21 @@ public class VoteService {
         return new VoteResponseDto(voteSaved);
     }
 
+    private Topic findById(Long id) {
+        Optional<Topic> topic = topicRepository.findById(id);
+        if (!topic.isPresent()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return topic.get();
+    }
+
     private void validations(Vote vote) {
         isSessionOpen(vote.getTopic().getSession());
         isRegisteredVoted(vote);
     }
 
     private void isSessionOpen(Session session) {
-        if (!session.getOpen()) {
+        if (Objects.isNull(session) || session.getEndDate().isBefore(LocalDateTime.now()) || !session.getOpen()) {
             throw new SessionNotOpenException();
         }
     }
