@@ -1,14 +1,13 @@
 package com.southsystem.voteservice.dto.response;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+
+import java.io.Serializable;
 
 @Builder
-@Setter
-@Getter
-public class VoteResultDto {
-
+@Data
+public class VoteResultDto implements Serializable {
 
     private String topic;
 
