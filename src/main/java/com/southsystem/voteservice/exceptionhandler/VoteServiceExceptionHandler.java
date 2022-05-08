@@ -1,5 +1,7 @@
 package com.southsystem.voteservice.exceptionhandler;
 
+import com.southsystem.voteservice.service.exception.InvalidCpfException;
+import com.southsystem.voteservice.service.exception.UnableToVoteException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -64,6 +66,24 @@ public class VoteServiceExceptionHandler extends ResponseEntityExceptionHandler 
         String messageDevelop = ex.toString();
         List<Erro> erros = Arrays.asList(new Erro(messageUser, messageDevelop));
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler({ InvalidCpfException.class })
+    public ResponseEntity<Object> handleInvalidCpfException(InvalidCpfException ex) {
+        String messageUser = messageSource.getMessage("cpf.invalid", null,
+                                                        LocaleContextHolder.getLocale());
+        String messageDevelop = ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(messageUser, messageDevelop));
+        return new ResponseEntity<>(erros, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler({ UnableToVoteException.class })
+    public ResponseEntity<Object> handleUnableToVoteException(UnableToVoteException ex) {
+        String messageUser = messageSource.getMessage("unabled.to.vote", null,
+                                                        LocaleContextHolder.getLocale());
+        String messageDevelop = ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(messageUser, messageDevelop));
+        return new ResponseEntity<>(erros, HttpStatus.CONFLICT);
     }
 
     private List<Erro> createListErros(BindingResult bindingResult) {

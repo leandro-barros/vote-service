@@ -1,14 +1,19 @@
 package com.southsystem.voteservice.service;
 
+import com.southsystem.voteservice.dto.integration.DocumentDto;
 import com.southsystem.voteservice.dto.request.VoteRequestDto;
 import com.southsystem.voteservice.dto.response.VoteResponseDto;
 import com.southsystem.voteservice.dto.response.VoteResultDto;
+import com.southsystem.voteservice.integration.DocumentClient;
 import com.southsystem.voteservice.model.Session;
 import com.southsystem.voteservice.model.Topic;
 import com.southsystem.voteservice.model.Vote;
 import com.southsystem.voteservice.repository.VoteRepository;
+import com.southsystem.voteservice.service.exception.InvalidCpfException;
 import com.southsystem.voteservice.service.exception.RegisteredVotedException;
 import com.southsystem.voteservice.service.exception.SessionNotOpenException;
+import com.southsystem.voteservice.service.exception.UnableToVoteException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,16 +26,19 @@ public class VoteService {
 
     private final TopicService topicService;
 
+    private final DocumentClient documentClient;
 
-    public VoteService(VoteRepository voteRepository, TopicService topicService) {
+
+    public VoteService(VoteRepository voteRepository, TopicService topicService, DocumentClient documentClient) {
         this.voteRepository = voteRepository;
         this.topicService = topicService;
+        this.documentClient = documentClient;
     }
 
     public VoteResponseDto saveVote(Long topicId, VoteRequestDto voteRequestDto) {
         Topic topic = topicService.findById(topicId);
         voteRequestDto.setTopic(topic);
-
+voteRequestDto.getAssociate().setCpf("13494948607");
         Vote vote = voteRequestDto.toVote();
 
         validations(vote);
@@ -80,7 +88,7 @@ public class VoteService {
             throw new SessionNotOpenException();
         }
         isRegisteredVoted(vote);
-
+        checkPermissionToVoteByCpf(vote.getAssociate().getCpf());
     }
 
     private boolean isSessionOpen(Session session) {
@@ -94,6 +102,17 @@ public class VoteService {
         if (voteRepository.existsByAssociateIdAndTopicId(vote.getAssociate().getId(), vote.getTopic().getId())) {
             throw new RegisteredVotedException();
         }
+    }
+
+    private void checkPermissionToVoteByCpf(String cpf) {
+        ResponseEntity<DocumentDto> documentDto = documentClient.findByCpf(cpf);
+
+        if (documentDto.getStatusCode().is4xxClientError()) {
+            throw new InvalidCpfException();
+        } else if(documentDto.getBody().getStatus().equalsIgnoreCase("UNABLE_TO_VOTE")) {
+            throw new UnableToVoteException();
+        }
+
     }
 
 }
