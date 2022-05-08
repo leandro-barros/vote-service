@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @Getter
 public class AssociateResponseDto {
 
+    private Long id;
+
     private String name;
 
     private String cpf;
@@ -19,6 +21,7 @@ public class AssociateResponseDto {
     public AssociateResponseDto(Associate associate) {
         this.name = associate.getName();
         this.cpf = associate.getCpf();
+        this.id = associate.getId();
     }
 
 }

@@ -17,13 +17,10 @@ public class SessionResponseDto {
 
     private LocalDateTime endDate;
 
-    private String open;
-
     public SessionResponseDto(Session session) {
         this.topic = session.getTopic();
         this.startDate = session.getStartDate();
         this.endDate = session.getEndDate();
-        this.open = session.getOpen() == true ? "Sim" : "Não";
     }
 
 }

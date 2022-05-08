@@ -23,18 +23,20 @@ public class SessionService {
     }
 
     public SessionResponseDto openSession(Long topicId, SessionRequestDto sessionRequestDto) {
-        sessionRequestDto.setTopic(topicService.findById(topicId));
-        existsSession(sessionRequestDto.getTopic().getId());
-        setDates(sessionRequestDto);
+        Session session = new Session();
+        session.setTopic(topicService.findById(topicId));
 
-        Session session = sessionRequestDto.toSession();
+        existsSession(session.getTopic().getId());
+
+        setDates(session, sessionRequestDto.getSessionTimeInMinute());
+
         sessionRepository.save(session);
         return new SessionResponseDto(session);
     }
 
-    private void setDates(SessionRequestDto session) {
+    private void setDates(Session session, Integer sessionTimeInMinute) {
         session.setStartDate(LocalDateTime.now());
-        Integer sessionTime = Objects.isNull(session.getSessionTimeInMinute()) ? 1 : session.getSessionTimeInMinute();
+        Integer sessionTime = Objects.isNull(sessionTimeInMinute) ? 1 : sessionTimeInMinute;
         session.setEndDate(session.getStartDate().plusMinutes(sessionTime));
     }
 

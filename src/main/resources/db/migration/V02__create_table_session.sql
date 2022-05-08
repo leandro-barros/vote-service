@@ -3,6 +3,5 @@ CREATE TABLE session (
     topic_id BIGINT(20),
     start_date DATETIME NOT NULL,
     end_date DATETIME NOT NULL,
-    open BOOLEAN NOT NULL,
     FOREIGN KEY (topic_id) REFERENCES topic(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

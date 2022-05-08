@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class SessionController {
 
     @ApiOperation(value = "Open a voting session")
     @PostMapping(value = "/open/topic/{topicId}", produces = "application/json;charset=UTF-8")
-    public ResponseEntity<SessionResponseDto> openSession(@PathVariable Long topicId, @Valid @RequestBody SessionRequestDto sessionRequestDto) {
+    public ResponseEntity<SessionResponseDto> openSession(@PathVariable Long topicId, @RequestBody SessionRequestDto sessionRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(sessionService.openSession(topicId, sessionRequestDto)) ;
     }
 
