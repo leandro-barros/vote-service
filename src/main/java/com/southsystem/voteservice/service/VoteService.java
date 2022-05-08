@@ -5,6 +5,7 @@ import com.southsystem.voteservice.dto.request.VoteRequestDto;
 import com.southsystem.voteservice.dto.response.VoteResponseDto;
 import com.southsystem.voteservice.dto.response.VoteResultDto;
 import com.southsystem.voteservice.integration.DocumentClient;
+import com.southsystem.voteservice.model.Associate;
 import com.southsystem.voteservice.model.Session;
 import com.southsystem.voteservice.model.Topic;
 import com.southsystem.voteservice.model.Vote;
@@ -27,19 +28,23 @@ public class VoteService {
 
     private final TopicService topicService;
 
+    private final AssociateService associateService;
+
     private final DocumentClient documentClient;
 
 
-    public VoteService(VoteRepository voteRepository, TopicService topicService, DocumentClient documentClient) {
+    public VoteService(VoteRepository voteRepository, TopicService topicService, AssociateService associateService, DocumentClient documentClient) {
         this.voteRepository = voteRepository;
         this.topicService = topicService;
         this.documentClient = documentClient;
+        this.associateService = associateService;
     }
 
     public VoteResponseDto saveVote(Long topicId, VoteRequestDto voteRequestDto) {
         Topic topic = topicService.findById(topicId);
-        voteRequestDto.setTopic(topic);
-        Vote vote = voteRequestDto.toVote();
+        Associate associate = associateService.findById(voteRequestDto.getAssociate().getId());
+        
+        Vote vote = Vote.builder().associate(associate).topic(topic).vote(voteRequestDto.getVote()).build();
 
         validations(vote);
 
