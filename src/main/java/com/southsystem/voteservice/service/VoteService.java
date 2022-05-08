@@ -13,6 +13,7 @@ import com.southsystem.voteservice.service.exception.InvalidCpfException;
 import com.southsystem.voteservice.service.exception.RegisteredVotedException;
 import com.southsystem.voteservice.service.exception.SessionNotOpenException;
 import com.southsystem.voteservice.service.exception.UnableToVoteException;
+import feign.FeignException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,6 @@ public class VoteService {
     public VoteResponseDto saveVote(Long topicId, VoteRequestDto voteRequestDto) {
         Topic topic = topicService.findById(topicId);
         voteRequestDto.setTopic(topic);
-voteRequestDto.getAssociate().setCpf("13494948607");
         Vote vote = voteRequestDto.toVote();
 
         validations(vote);
@@ -105,14 +105,17 @@ voteRequestDto.getAssociate().setCpf("13494948607");
     }
 
     private void checkPermissionToVoteByCpf(String cpf) {
-        ResponseEntity<DocumentDto> documentDto = documentClient.findByCpf(cpf);
+        try {
+            ResponseEntity<DocumentDto> documentDto = documentClient.findByCpf(cpf);
 
-        if (documentDto.getStatusCode().is4xxClientError()) {
+            if (documentDto.getStatusCode().is4xxClientError()) {
+                throw new InvalidCpfException();
+            } else if(documentDto.getBody().getStatus().equalsIgnoreCase("UNABLE_TO_VOTE")) {
+                throw new UnableToVoteException();
+            }
+        } catch (FeignException e) {
             throw new InvalidCpfException();
-        } else if(documentDto.getBody().getStatus().equalsIgnoreCase("UNABLE_TO_VOTE")) {
-            throw new UnableToVoteException();
         }
-
     }
 
 }
