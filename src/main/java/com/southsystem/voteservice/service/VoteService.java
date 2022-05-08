@@ -6,31 +6,29 @@ import com.southsystem.voteservice.dto.response.VoteResultDto;
 import com.southsystem.voteservice.model.Session;
 import com.southsystem.voteservice.model.Topic;
 import com.southsystem.voteservice.model.Vote;
-import com.southsystem.voteservice.repository.TopicRepository;
 import com.southsystem.voteservice.repository.VoteRepository;
 import com.southsystem.voteservice.service.exception.RegisteredVotedException;
 import com.southsystem.voteservice.service.exception.SessionNotOpenException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class VoteService {
 
     private final VoteRepository voteRepository;
 
-    private final TopicRepository topicRepository;
+    private final TopicService topicService;
 
-    public VoteService(VoteRepository voteRepository, TopicRepository topicRepository) {
+
+    public VoteService(VoteRepository voteRepository, TopicService topicService) {
         this.voteRepository = voteRepository;
-        this.topicRepository = topicRepository;
+        this.topicService = topicService;
     }
 
     public VoteResponseDto saveVote(Long topicId, VoteRequestDto voteRequestDto) {
-        Topic topic = findById(topicId);
+        Topic topic = topicService.findById(topicId);
         voteRequestDto.setTopic(topic);
 
         Vote vote = voteRequestDto.toVote();
@@ -43,7 +41,7 @@ public class VoteService {
 
     public VoteResultDto result(Long topicId) {
         VoteResultDto voteResultDto = null;
-        Topic topic = findById(topicId);
+        Topic topic = topicService.findById(topicId);
 
         if (isSessionOpen(topic.getSession())) {
             voteResultDto = VoteResultDto.builder().voteInFavor(0L).voteAgainst(0L)
@@ -75,14 +73,6 @@ public class VoteService {
         }
 
         return result;
-    }
-
-    private Topic findById(Long id) {
-        Optional<Topic> topic = topicRepository.findById(id);
-        if (!topic.isPresent()) {
-            throw new EmptyResultDataAccessException(1);
-        }
-        return topic.get();
     }
 
     private void validations(Vote vote) {

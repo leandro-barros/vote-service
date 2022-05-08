@@ -5,17 +5,14 @@ import com.southsystem.voteservice.model.Topic;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
 public class SessionRequestDto {
 
-    @NotNull
     private Topic topic;
 
-    @NotNull
     private LocalDateTime startDate;
 
     private LocalDateTime endDate;

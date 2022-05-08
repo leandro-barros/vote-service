@@ -28,9 +28,9 @@ public class SessionController {
         this.sessionService = sessionService;
     }
 
-    @PostMapping("/open")
-    public ResponseEntity<SessionResponseDto> openSession(@Valid @RequestBody SessionRequestDto sessionRequestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(sessionService.openSession(sessionRequestDto)) ;
+    @PostMapping("/open/topic/{topicId}")
+    public ResponseEntity<SessionResponseDto> openSession(@PathVariable Long topicId, @Valid @RequestBody SessionRequestDto sessionRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(sessionService.openSession(topicId, sessionRequestDto)) ;
     }
 
     @ExceptionHandler({ SessionRegisteredException.class })
