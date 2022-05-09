@@ -60,7 +60,7 @@ public class VoteService {
 
         if (isSessionOpen(topic.getSession())) {
             VoteResultDto voteResultDto = VoteResultDto.builder().voteInFavor(0L).voteAgainst(0L)
-                                                   .topic(topic.getSubject()).result("Eleição está em andamento.")
+                                                   .topic(topic.getSubject()).result("Eleição está em andamento ou não foi iniciada.")
                                           .build();
             log.info("Topic election with id: {} is in progress", topicId);
             return voteResultDto;
