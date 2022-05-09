@@ -1,0 +1,2 @@
+INSERT INTO topic(id, subject, description, send_result) VALUES (NULL, 'Pauta cooperado', 'Pauta cooperado do ano de 2022', false);
+INSERT INTO topic(id, subject, description, send_result) VALUES (NULL, 'Pauta sobre open banking', 'Pauta sobre open banking do ano de 2022', false);
