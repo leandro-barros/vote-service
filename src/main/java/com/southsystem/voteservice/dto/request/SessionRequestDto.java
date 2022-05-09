@@ -1,8 +1,10 @@
 package com.southsystem.voteservice.dto.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Setter
 @Getter
 public class SessionRequestDto {
