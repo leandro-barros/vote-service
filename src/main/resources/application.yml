@@ -1,5 +1,5 @@
 server:
-  port: 8087
+  port: 8080
 
 spring:
   application:
@@ -14,4 +14,14 @@ spring:
       show-sql: true
       hibernate:
         ddl-auto: none
+  kafka:
+    bootstrap-servers: kafka:9092
 
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+
+topic:
+  name: topic-vote
+api:
+  user-info: https://user-info.herokuapp.com/users

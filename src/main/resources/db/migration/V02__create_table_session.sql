@@ -1,8 +1,7 @@
 CREATE TABLE session (
     id BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
     topic_id BIGINT(20),
-    startDate DATETIME NOT NULL,
-    endDate DATETIME NOT NULL,
-    open BOOLEAN NOT NULL,
+    start_date DATETIME NOT NULL,
+    end_date DATETIME NOT NULL,
     FOREIGN KEY (topic_id) REFERENCES topic(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
