@@ -15,9 +15,9 @@ Para fins de exercício, a segurança das interfaces pode ser abstraída e qualq
 ## Ambiente para execução
 
 Para execução do projeto basta possuir o Docker instalado.
-Baixa o projeto deste repositório e com o terminal aberto na raiz do projeto execute os comandos abaixo:
+Baixa o projeto deste repositório e com o terminal aberto na raiz da pasta do projeto execute os comandos abaixo:
 
-Obs: Execute os 4 comandos em sequência.
+Obs: Execute os 4 comandos em sequência e aguarde finalizar um comando para executar o outro.
 
 - sudo docker-compose build
 - docker-compose up
@@ -36,11 +36,13 @@ Foi feita a integração com o serviço https://user-info.herokuapp.com/users/{c
 
 ### Tarefa Bônus 2 - Mensageria e filas
 
-Esse implementação foi feita utilizando o Apache Kafka. Assim que uma uma sessão de votação acaba, o resultado é enviado para um tópico onde poderá ser consumido por outras aplicações.
+Essa implementação foi feita utilizando o Apache Kafka. Assim que uma sessão de votação acaba, o resultado é enviado para um tópico onde poderá ser consumido por outras aplicações.
+
+Você pode visualizar as messagens do tópico através do kafdrop no endereço: http://localhost:19000/
 
 ### Tarefa Bônus 4 - Versionamento da API
 
-O versionamento foi feito através de endpoints, onde para uma nova versão cria um novo recurso informando a versão da seguinte forma: 
+O versionamento foi feito através de endpoints, onde para uma nova versão cria um novo recurso informando a versão da seguinte forma:
 
 Versão 1: /api/v1/topic
 
